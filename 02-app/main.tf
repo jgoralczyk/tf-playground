@@ -12,7 +12,7 @@ data "terraform_remote_state" "siec" {
 }
 
 # Wywołanie modułu NSG
-module "my_nsg" {
+module "frontend_nsg" {
   source   = "../modules/nsg"
   nsg_name = "nsg-app-prod"
   location = "westeurope"
@@ -25,5 +25,10 @@ module "my_nsg" {
 resource "azurerm_subnet_network_security_group_association" "this" {
 
   subnet_id                 = data.terraform_remote_state.siec.outputs.subnet_id
-  network_security_group_id = module.my_nsg.nsg_id
+  network_security_group_id = module.frontend_nsg.nsg_id
+}
+
+moved {
+  from = module.my_nsg
+  to   = module.frontend_nsg
 }
